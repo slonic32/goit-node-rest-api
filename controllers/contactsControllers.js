@@ -16,10 +16,7 @@ import {
 export const getAllContacts = async (req, res, next) => {
   try {
     const contacts = await listContacts();
-    res.status(200).json({
-      message: "Success",
-      contacts,
-    });
+    res.status(200).json(contacts);
   } catch (error) {
     next(error);
   }
@@ -29,10 +26,7 @@ export const getOneContact = async (req, res, next) => {
   try {
     const contact = await getContactById(req.params.id);
     if (contact) {
-      res.status(200).json({
-        message: "Success",
-        contact,
-      });
+      res.status(200).json(contact);
     } else {
       res.status(404).json({
         message: "Not found",
@@ -47,10 +41,7 @@ export const deleteContact = async (req, res, next) => {
   try {
     const contact = await removeContact(req.params.id);
     if (contact) {
-      res.status(200).json({
-        message: "Success",
-        contact,
-      });
+      res.status(200).json(contact);
     } else {
       res.status(404).json({
         message: "Not found",
@@ -74,10 +65,7 @@ export const createContact = async (req, res, next) => {
       req.body.email,
       req.body.phone
     );
-    res.status(201).json({
-      message: "Success",
-      newContact,
-    });
+    res.status(201).json(newContact);
   } catch (error) {
     next(error);
   }
@@ -101,10 +89,7 @@ export const updateContact = async (req, res, next) => {
       );
 
       if (contact) {
-        res.status(200).json({
-          message: "Success",
-          contact,
-        });
+        res.status(200).json(contact);
       } else {
         res.status(404).json({
           message: "Not found",
