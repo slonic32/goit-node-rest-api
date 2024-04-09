@@ -12,6 +12,7 @@ import { validate, validateID } from "../helpers/validate.js";
 import {
   createContactSchema,
   updateContactSchema,
+  favoriteContactSchema,
 } from "../schemas/contactsSchemas.js";
 
 export const getAllContacts = async (req, res, next) => {
@@ -134,18 +135,19 @@ export const updateContact = async (req, res, next) => {
 export async function updateStatusContact(req, res, next) {
   try {
     if (validateID(req.params.id)) {
-      if (req.body.favorite === true || req.body.favorite === false) {
-        const contact = await editFavContact(req.params.id, req.body.favorite);
-        if (contact) {
-          res.status(200).json(contact);
-        } else {
-          res.status(404).json({
-            message: "Not found",
-          });
-        }
+      validate(
+        favoriteContactSchema,
+        req.body.name,
+        req.body.email,
+        req.body.phone,
+        req.body.favorite
+      );
+      const contact = await editFavContact(req.params.id, req.body.favorite);
+      if (contact) {
+        res.status(200).json(contact);
       } else {
-        res.status(400).json({
-          message: "Body must have favorite field",
+        res.status(404).json({
+          message: "Not found",
         });
       }
     } else {

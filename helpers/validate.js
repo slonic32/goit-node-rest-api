@@ -1,8 +1,8 @@
 import HttpError from "./HttpError.js";
 import { isValidObjectId } from "mongoose";
 
-export function validate(schema, name, email, phone) {
-  const { value, error } = schema.validate({ name, email, phone });
+export function validate(schema, name, email, phone, favorite) {
+  const { value, error } = schema.validate({ name, email, phone, favorite });
   if (error) {
     throw HttpError(400, error.details.map((err) => err.message).join(" ; "));
   }
