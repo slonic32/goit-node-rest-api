@@ -68,12 +68,7 @@ export const deleteContact = async (req, res, next) => {
 
 export const createContact = async (req, res, next) => {
   try {
-    validate(
-      createContactSchema,
-      req.body.name,
-      req.body.email,
-      req.body.phone
-    );
+    validate(createContactSchema, req.body);
     const newContact = await addContact(
       req.body.name,
       req.body.email,
@@ -94,13 +89,7 @@ export const updateContact = async (req, res, next) => {
         req.body.phone ||
         req.body.favorite
       ) {
-        validate(
-          updateContactSchema,
-          req.body.name,
-          req.body.email,
-          req.body.phone,
-          req.body.favorite
-        );
+        validate(updateContactSchema, req.body);
 
         const contact = await editContact(
           req.params.id,
@@ -135,13 +124,7 @@ export const updateContact = async (req, res, next) => {
 export async function updateStatusContact(req, res, next) {
   try {
     if (validateID(req.params.id)) {
-      validate(
-        favoriteContactSchema,
-        req.body.name,
-        req.body.email,
-        req.body.phone,
-        req.body.favorite
-      );
+      validate(favoriteContactSchema, req.body);
       const contact = await editFavContact(req.params.id, req.body.favorite);
       if (contact) {
         res.status(200).json(contact);
