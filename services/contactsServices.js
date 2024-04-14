@@ -1,9 +1,9 @@
 import { ContactModel } from "../models/contactsModel.js";
 import HttpError from "../helpers/HttpError.js";
 
-export async function listContacts() {
+export async function listContacts(user) {
   try {
-    const contacts = await ContactModel.find();
+    const contacts = await ContactModel.find({ owner: user });
     return contacts;
   } catch (error) {
     throw HttpError(500);
@@ -28,13 +28,14 @@ export async function removeContact(contactId) {
   }
 }
 
-export async function addContact(name, email, phone, favorite) {
+export async function addContact(id, name, email, phone, favorite) {
   try {
     const newContact = await ContactModel.create({
       name: name,
       email: email,
       phone: phone,
       favorite: favorite,
+      owner: id,
     });
     return newContact;
   } catch (error) {
