@@ -27,8 +27,8 @@ export const getAllContacts = async (req, res, next) => {
 export const getOneContact = async (req, res, next) => {
   try {
     if (validateID(req.params.id)) {
-      const contact = await getContactById(req.params.id);
-      if (contact && contact.owner.toString() === req.user._id.toString()) {
+      const contact = await getContactById(req.params.id, req.user);
+      if (contact) {
         res.status(200).json(contact);
       } else {
         res.status(404).json({
@@ -48,16 +48,7 @@ export const getOneContact = async (req, res, next) => {
 export const deleteContact = async (req, res, next) => {
   try {
     if (validateID(req.params.id)) {
-      const checkContact = await getContactById(req.params.id);
-      if (
-        !checkContact ||
-        !(checkContact.owner.toString() === req.user._id.toString())
-      ) {
-        res.status(404).json({
-          message: "Not found",
-        });
-      }
-      const contact = await removeContact(req.params.id);
+      const contact = await removeContact(req.params.id, req.user);
       if (contact) {
         res.status(200).json(contact);
       } else {
@@ -79,7 +70,7 @@ export const createContact = async (req, res, next) => {
   try {
     validate(createContactSchema, req.body);
     const newContact = await addContact(
-      req.user._id,
+      req.user,
       req.body.name,
       req.body.email,
       req.body.phone
@@ -101,17 +92,8 @@ export const updateContact = async (req, res, next) => {
       ) {
         validate(updateContactSchema, req.body);
 
-        const checkContact = await getContactById(req.params.id);
-        if (
-          !checkContact ||
-          !(checkContact.owner.toString() === req.user._id.toString())
-        ) {
-          res.status(404).json({
-            message: "Not found",
-          });
-        }
-
         const contact = await editContact(
+          req.user,
           req.params.id,
           req.body.name,
           req.body.email,
@@ -146,17 +128,11 @@ export async function updateStatusContact(req, res, next) {
     if (validateID(req.params.id)) {
       validate(favoriteContactSchema, req.body);
 
-      const checkContact = await getContactById(req.params.id);
-      if (
-        !checkContact ||
-        !(checkContact.owner.toString() === req.user._id.toString())
-      ) {
-        res.status(404).json({
-          message: "Not found",
-        });
-      }
-
-      const contact = await editFavContact(req.params.id, req.body.favorite);
+      const contact = await editFavContact(
+        req.user,
+        req.params.id,
+        req.body.favorite
+      );
       if (contact) {
         res.status(200).json(contact);
       } else {

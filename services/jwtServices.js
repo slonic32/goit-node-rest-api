@@ -11,9 +11,8 @@ export function genToken(id) {
 export function readToken(token) {
   try {
     const { id } = jwt.verify(token, process.env.jwtSecrete);
-
     return id;
   } catch (err) {
-    throw new HttpError(401, "Not authorized");
+    throw HttpError(401, "Not authorized");
   }
 }
