@@ -1,6 +1,5 @@
 import { ContactModel } from "../models/contactsModel.js";
 import HttpError from "../helpers/HttpError.js";
-import { validateID } from "../helpers/validate.js";
 
 export async function listContacts() {
   try {
