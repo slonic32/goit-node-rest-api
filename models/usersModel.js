@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 const userSchema = new Schema(
   {
@@ -21,14 +22,20 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
+    avatarURL: String,
   },
   { versionKey: false }
 );
 
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+  if (this.isNew) {
+    const emailHash = crypto.createHash("md5").update(this.email).digest("hex");
+    this.avatarURL = `https://gravatar.com/avatar/${emailHash}.jpg?d=retro`;
+  }
 
-  this.password = await bcrypt.hash(this.password, +process.env.bcryptSalt);
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, +process.env.bcryptSalt);
+  }
 
   next();
 });
