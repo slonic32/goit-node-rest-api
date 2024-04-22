@@ -1,41 +1,47 @@
 import { ContactModel } from "../models/contactsModel.js";
 import HttpError from "../helpers/HttpError.js";
-import { validateID } from "../helpers/validate.js";
 
-export async function listContacts() {
+export async function listContacts(user) {
   try {
-    const contacts = await ContactModel.find();
+    const contacts = await ContactModel.find({ owner: user });
     return contacts;
   } catch (error) {
     throw HttpError(500);
   }
 }
 
-export async function getContactById(contactId) {
+export async function getContactById(contactId, user) {
   try {
-    const contacts = await ContactModel.findById(contactId);
+    const contacts = await ContactModel.findOne({
+      _id: contactId,
+      owner: user,
+    });
     return contacts;
   } catch (error) {
     throw HttpError(500);
   }
 }
 
-export async function removeContact(contactId) {
+export async function removeContact(contactId, user) {
   try {
-    const contacts = await ContactModel.findByIdAndDelete(contactId);
+    const contacts = await ContactModel.findOneAndDelete({
+      _id: contactId,
+      owner: user,
+    });
     return contacts;
   } catch (error) {
     throw HttpError(500);
   }
 }
 
-export async function addContact(name, email, phone, favorite) {
+export async function addContact(user, name, email, phone, favorite) {
   try {
     const newContact = await ContactModel.create({
       name: name,
       email: email,
       phone: phone,
       favorite: favorite,
+      owner: user._id,
     });
     return newContact;
   } catch (error) {
@@ -43,7 +49,14 @@ export async function addContact(name, email, phone, favorite) {
   }
 }
 
-export async function editContact(contactId, name, email, phone, favorite) {
+export async function editContact(
+  user,
+  contactId,
+  name,
+  email,
+  phone,
+  favorite
+) {
   try {
     const newContact = {};
     if (name) {
@@ -58,8 +71,11 @@ export async function editContact(contactId, name, email, phone, favorite) {
     if (favorite) {
       newContact.favorite = favorite;
     }
-    const contact = await ContactModel.findByIdAndUpdate(
-      contactId,
+    const contact = await ContactModel.findOneAndUpdate(
+      {
+        _id: contactId,
+        owner: user,
+      },
       newContact,
       { new: true }
     );
@@ -69,10 +85,13 @@ export async function editContact(contactId, name, email, phone, favorite) {
   }
 }
 
-export async function editFavContact(contactId, favorite) {
+export async function editFavContact(user, contactId, favorite) {
   try {
-    const contact = await ContactModel.findByIdAndUpdate(
-      contactId,
+    const contact = await ContactModel.findOneAndUpdate(
+      {
+        _id: contactId,
+        owner: user,
+      },
       { favorite: favorite },
       { new: true }
     );
