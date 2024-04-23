@@ -3,5 +3,3 @@ node_modules/
 .idea
 .vscode
 .DS_Store
-public/avatars/*
-tmp/*
