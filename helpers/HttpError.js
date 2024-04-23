@@ -7,10 +7,8 @@ const messageList = {
   500: "Internal Server Error",
 };
 
-const HttpError = (status, message = messageList[status]) => {
+export default function HttpError(status, message = messageList[status]) {
   const error = new Error(message);
   error.status = status;
   return error;
-};
-
-export default HttpError;
+}

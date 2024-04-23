@@ -30,3 +30,14 @@ export async function getUserById(id) {
     throw HttpError(500);
   }
 }
+
+export async function changeAvatar(id, avatar) {
+  try {
+    const user = await UserModel.findOne({ _id: id });
+    user.avatarURL = avatar;
+    await user.save();
+    return user;
+  } catch (error) {
+    throw HttpError(500);
+  }
+}

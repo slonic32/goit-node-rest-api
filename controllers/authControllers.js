@@ -1,10 +1,12 @@
 import { validate } from "../helpers/validate.js";
 import { registerSchema } from "../schemas/userSchemas.js";
 import {
+  changeAvatar,
   createUser,
   getUserByEmail,
   getUserById,
 } from "../services/authServices.js";
+import { resizeImg } from "../services/imgServices.js";
 import { genToken } from "../services/jwtServices.js";
 
 export async function registerUser(req, res, next) {
@@ -73,6 +75,24 @@ export async function currentUser(req, res, next) {
       email: user.email,
       subscription: user.subscription,
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updateAvatar(req, res, next) {
+  try {
+    if (req.file) {
+      const avatar = await resizeImg(req.file);
+      const user = await changeAvatar(req.user._id, avatar);
+      res.status(200).json({
+        avatarURL: user.avatarURL,
+      });
+    } else {
+      res.status(401).json({
+        message: "Not authorized",
+      });
+    }
   } catch (error) {
     next(error);
   }
