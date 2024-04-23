@@ -1,9 +1,11 @@
 import multer from "multer";
 import { v4 } from "uuid";
 import HttpError from "../helpers/HttpError.js";
+import * as fse from "fs-extra";
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: async function (req, file, cb) {
+    await fse.ensureDir("tmp");
     cb(null, "tmp");
   },
   filename: function (req, file, cb) {
