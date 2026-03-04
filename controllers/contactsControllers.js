@@ -17,7 +17,7 @@ import {
 
 export const getAllContacts = async (req, res, next) => {
   try {
-    const contacts = await listContacts(req.user);
+    const contacts = await listContacts();
     res.status(200).json(contacts);
   } catch (error) {
     next(error);
@@ -27,7 +27,7 @@ export const getAllContacts = async (req, res, next) => {
 export const getOneContact = async (req, res, next) => {
   try {
     if (validateID(req.params.id)) {
-      const contact = await getContactById(req.params.id, req.user);
+      const contact = await getContactById(req.params.id);
       if (contact) {
         res.status(200).json(contact);
       } else {
@@ -48,7 +48,7 @@ export const getOneContact = async (req, res, next) => {
 export const deleteContact = async (req, res, next) => {
   try {
     if (validateID(req.params.id)) {
-      const contact = await removeContact(req.params.id, req.user);
+      const contact = await removeContact(req.params.id);
       if (contact) {
         res.status(200).json(contact);
       } else {
@@ -70,7 +70,6 @@ export const createContact = async (req, res, next) => {
   try {
     validate(createContactSchema, req.body);
     const newContact = await addContact(
-      req.user,
       req.body.name,
       req.body.email,
       req.body.phone
@@ -93,7 +92,6 @@ export const updateContact = async (req, res, next) => {
         validate(updateContactSchema, req.body);
 
         const contact = await editContact(
-          req.user,
           req.params.id,
           req.body.name,
           req.body.email,
@@ -127,12 +125,7 @@ export async function updateStatusContact(req, res, next) {
   try {
     if (validateID(req.params.id)) {
       validate(favoriteContactSchema, req.body);
-
-      const contact = await editFavContact(
-        req.user,
-        req.params.id,
-        req.body.favorite
-      );
+      const contact = await editFavContact(req.params.id, req.body.favorite);
       if (contact) {
         res.status(200).json(contact);
       } else {
