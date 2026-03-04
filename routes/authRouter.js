@@ -4,9 +4,7 @@ import {
   loginUser,
   logoutUser,
   registerUser,
-  resentVerification,
   updateAvatar,
-  verifyUser,
 } from "../controllers/authControllers.js";
 import { auth } from "../middlewares/authMiddleware.js";
 import { uploadImage } from "../middlewares/imgMiddleware.js";
@@ -14,9 +12,6 @@ import { uploadImage } from "../middlewares/imgMiddleware.js";
 const authRouter = express.Router();
 
 authRouter.post("/register", registerUser);
-
-authRouter.get("/verify/:verificationToken", verifyUser);
-authRouter.post("/verify", resentVerification);
 
 authRouter.post("/login", loginUser);
 
