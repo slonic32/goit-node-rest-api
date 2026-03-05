@@ -1,23 +1,26 @@
-import { Schema, model } from "mongoose";
+import {  DataTypes } from "sequelize";
+import { sequelize } from "./sequelize.js";
 
-const contactSchema = new Schema(
-  {
+export const Contact = sequelize.define(
+  'contact', {
     name: {
-      type: String,
-      required: [true, "Set name for contact"],
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     email: {
-      type: String,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     phone: {
-      type: String,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     favorite: {
-      type: Boolean,
-      default: false,
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
-  },
-  { versionKey: false }
-);
+  })
 
-export const ContactModel = model("contacts", contactSchema);
+
+
+//Contact.sync({ alter: true })

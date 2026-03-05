@@ -1,15 +1,13 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import dotenv from "dotenv";
-import mongoose from "mongoose";
+import "dotenv/config";
+import { connectDatabase } from "./models/pgsql.js";
 
 import contactsRouter from "./routes/contactsRouter.js";
 
-dotenv.config();
-
 try {
-  await mongoose.connect(process.env.mongodbURI);
+  await connectDatabase();
   console.log("Database connection successful");
 } catch (error) {
   console.log(error.message);
@@ -32,6 +30,9 @@ app.use((err, req, res, next) => {
   const { status = 500, message = "Server error" } = err;
   res.status(status).json({ message });
 });
+
+
+
 
 app.listen(process.env.PORT, () => {
   console.log("Server is running. Use our API on port: ", process.env.PORT);
