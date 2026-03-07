@@ -1,17 +1,14 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-//import dotenv from "dotenv";
 import "dotenv/config";
-import mongoose from "mongoose";
+import { connectDatabase } from "./models/pgsql.js";
 
 import contactsRouter from "./routes/contactsRouter.js";
 import authRouter from "./routes/authRouter.js";
 
-//dotenv.config();
-
 try {
-  await mongoose.connect(process.env.mongodbURI);
+  await connectDatabase();
   console.log("Database connection successful");
 } catch (error) {
   console.log(error.message);
@@ -24,7 +21,7 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/users", authRouter);
+app.use("/api/auth", authRouter);
 app.use("/api/contacts", contactsRouter);
 app.use(express.static("public"));
 
@@ -38,5 +35,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(process.env.PORT, () => {
-  console.log("Server is running. Use our API on port: ", +process.env.PORT);
+  console.log("Server is running. Use our API on port: ", process.env.PORT);
 });

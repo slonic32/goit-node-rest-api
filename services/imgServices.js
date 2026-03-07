@@ -11,7 +11,7 @@ export async function resizeImg(file) {
     await img.resize(250, 250);
     await fse.ensureDir(fullPath);
     await img.write(path.join(fullPath, file.filename));
-    return path.join(fullPath, file.filename);
+    return path.join("/avatars", file.filename);
   } catch (error) {
     console.log("resize error");
     throw HttpError(500);
