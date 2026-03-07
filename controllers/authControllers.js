@@ -1,5 +1,3 @@
-import { validate } from "../helpers/validate.js";
-import { registerSchema } from "../schemas/userSchemas.js";
 import {
   createUser,
   getUserByEmail,
@@ -10,18 +8,16 @@ import {
 
 export async function registerUser(req, res, next) {
   try {
-    validate(registerSchema, req.body);
     const { email, password } = req.body;
-    if (!(await getUserByEmail(email))) {
-      const newUser = await createUser(email, password);
-      res
-        .status(201)
-        .json({ email: newUser.email, subscription: newUser.subscription });
-    } else {
-      res.status(409).json({
+    if (await getUserByEmail(email)) {
+      return res.status(409).json({
         message: "Email in use",
       });
     }
+    const newUser = await createUser(email, password);
+    return res
+      .status(201)
+      .json({ email: newUser.email, subscription: newUser.subscription });
   } catch (error) {
     next(error);
   }
@@ -29,7 +25,6 @@ export async function registerUser(req, res, next) {
 
 export async function loginUser(req, res, next) {
   try {
-    validate(registerSchema, req.body);
     const { email, password } = req.body;
     const result = await loginUserService({ email, password });
     res.status(200).json(result);

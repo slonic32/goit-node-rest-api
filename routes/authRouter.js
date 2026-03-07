@@ -6,12 +6,13 @@ import {
   registerUser,
 } from "../controllers/authControllers.js";
 import { auth } from "../middlewares/authMiddleware.js";
+import { authValidate } from "../middlewares/authValidate.js";
 
 const authRouter = express.Router();
 
-authRouter.post("/register", registerUser);
+authRouter.post("/register", authValidate, registerUser);
 
-authRouter.post("/login", loginUser);
+authRouter.post("/login", authValidate, loginUser);
 
 authRouter.post("/logout", auth, logoutUser);
 
