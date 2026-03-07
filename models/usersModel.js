@@ -1,41 +1,33 @@
-import { Schema, model } from "mongoose";
-import bcrypt from "bcrypt";
+import { DataTypes } from "sequelize";
+import { sequelize } from "./sequelize.js";
 
-const userSchema = new Schema(
-  {
-    password: {
-      type: String,
-      required: [true, "Password is required"],
+const emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+export const User = sequelize.define("user", {
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      is: emailRegexp,
     },
-    email: {
-      type: String,
-      required: [true, "Email is required"],
-      unique: true,
-    },
-    subscription: {
-      type: String,
-      enum: ["starter", "pro", "business"],
-      default: "starter",
-    },
-    token: {
-      type: String,
-      default: null,
+    unique: {
+      args: true,
+      msg: "email already exist",
     },
   },
-  { versionKey: false }
-);
-
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-
-  this.password = await bcrypt.hash(this.password, +process.env.bcryptSalt);
-
-  next();
+  subscription: {
+    type: DataTypes.ENUM,
+    values: ["starter", "pro", "business"],
+    defaultValue: "starter",
+  },
+  token: {
+    type: DataTypes.STRING,
+    defaultValue: null,
+  },
 });
 
-userSchema.methods.checkPassword = async function (password) {
-  const result = await bcrypt.compare(password, this.password);
-  return result;
-};
-
-export const UserModel = model("users", userSchema);
+//Contact.sync({ alter: true })

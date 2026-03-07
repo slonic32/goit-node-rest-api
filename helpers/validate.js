@@ -1,5 +1,5 @@
 import HttpError from "./HttpError.js";
-import { isValidObjectId } from "mongoose";
+
 
 export function validate(schema, body) {
   const { value, error } = schema.validate(body);
@@ -8,6 +8,12 @@ export function validate(schema, body) {
   }
 }
 
-export function validateID(id) {
-  return isValidObjectId(id);
+export function validateID(contactId) {
+ 
+  // only  integers
+  if (!/^[1-9]\d*$/.test(String(contactId))) {
+    return false;
+  }
+
+  return true;
 }
