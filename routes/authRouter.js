@@ -7,6 +7,7 @@ import {
   updateAvatar,
 } from "../controllers/authControllers.js";
 import { auth } from "../middlewares/authMiddleware.js";
+
 import { uploadImage } from "../middlewares/imgMiddleware.js";
 
 const authRouter = express.Router();

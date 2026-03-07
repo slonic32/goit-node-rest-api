@@ -1,51 +1,51 @@
-import { ContactModel } from "../models/contactsModel.js";
+import { Contact as ContactModel } from "../models/contactsModel.js";
 import HttpError from "../helpers/HttpError.js";
 
 export async function listContacts(user) {
   try {
-    const contacts = await ContactModel.find({ owner: user });
-    return contacts;
+    return await ContactModel.findAll({ where: { owner: user.id } });
   } catch (error) {
-    throw HttpError(500);
+    throw HttpError(500, error.message);
   }
 }
 
-export async function getContactById(contactId, user) {
+export async function getContactById(user, contactId) {
   try {
-    const contacts = await ContactModel.findOne({
-      _id: contactId,
-      owner: user,
+    return await ContactModel.findOne({
+      where: { id: contactId, owner: user.id },
     });
-    return contacts;
   } catch (error) {
-    throw HttpError(500);
+    throw HttpError(500, error.message);
   }
 }
 
-export async function removeContact(contactId, user) {
+export async function removeContact(user, contactId) {
   try {
-    const contacts = await ContactModel.findOneAndDelete({
-      _id: contactId,
-      owner: user,
+    const contact = await ContactModel.findOne({
+      where: { id: contactId, owner: user.id },
     });
-    return contacts;
+    if (!contact) return null;
+
+    await contact.destroy();
+    return contact;
   } catch (error) {
-    throw HttpError(500);
+    throw HttpError(500, error.message);
   }
 }
 
-export async function addContact(user, name, email, phone, favorite) {
+export async function addContact(user, name, email, phone, favorite = false) {
   try {
-    const newContact = await ContactModel.create({
-      name: name,
-      email: email,
-      phone: phone,
-      favorite: favorite,
-      owner: user._id,
+    return await ContactModel.create({
+      name,
+      email,
+      phone,
+      favorite,
+      owner: user.id,
     });
-    return newContact;
   } catch (error) {
-    throw HttpError(500);
+    console.log(error);
+
+    throw HttpError(500, error.message);
   }
 }
 
@@ -55,48 +55,37 @@ export async function editContact(
   name,
   email,
   phone,
-  favorite
+  favorite,
 ) {
   try {
-    const newContact = {};
-    if (name) {
-      newContact.name = name;
-    }
-    if (email) {
-      newContact.email = email;
-    }
-    if (phone) {
-      newContact.phone = phone;
-    }
-    if (favorite) {
-      newContact.favorite = favorite;
-    }
-    const contact = await ContactModel.findOneAndUpdate(
-      {
-        _id: contactId,
-        owner: user,
-      },
-      newContact,
-      { new: true }
-    );
+    const contact = await ContactModel.findOne({
+      where: { id: contactId, owner: user.id },
+    });
+    if (!contact) return null;
+
+    const updates = {};
+    if (name !== undefined) updates.name = name;
+    if (email !== undefined) updates.email = email;
+    if (phone !== undefined) updates.phone = phone;
+    if (favorite !== undefined) updates.favorite = favorite;
+
+    await contact.update(updates);
     return contact;
   } catch (error) {
-    throw HttpError(500);
+    throw HttpError(500, error.message);
   }
 }
 
 export async function editFavContact(user, contactId, favorite) {
   try {
-    const contact = await ContactModel.findOneAndUpdate(
-      {
-        _id: contactId,
-        owner: user,
-      },
-      { favorite: favorite },
-      { new: true }
-    );
+    const contact = await ContactModel.findOne({
+      where: { id: contactId, owner: user.id },
+    });
+    if (!contact) return null;
+
+    await contact.update({ favorite });
     return contact;
   } catch (error) {
-    throw HttpError(500);
+    throw HttpError(500, error.message);
   }
 }

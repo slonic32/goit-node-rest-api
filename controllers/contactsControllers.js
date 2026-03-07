@@ -26,8 +26,8 @@ export const getAllContacts = async (req, res, next) => {
 
 export const getOneContact = async (req, res, next) => {
   try {
-    if (validateID(req.params.id)) {
-      const contact = await getContactById(req.params.id, req.user);
+    if (validateID(req.params.contactId)) {
+      const contact = await getContactById(req.user, req.params.contactId);
       if (contact) {
         res.status(200).json(contact);
       } else {
@@ -47,8 +47,8 @@ export const getOneContact = async (req, res, next) => {
 
 export const deleteContact = async (req, res, next) => {
   try {
-    if (validateID(req.params.id)) {
-      const contact = await removeContact(req.params.id, req.user);
+    if (validateID(req.params.contactId)) {
+      const contact = await removeContact(req.user, req.params.contactId);
       if (contact) {
         res.status(200).json(contact);
       } else {
@@ -73,8 +73,9 @@ export const createContact = async (req, res, next) => {
       req.user,
       req.body.name,
       req.body.email,
-      req.body.phone
+      req.body.phone,
     );
+
     res.status(201).json(newContact);
   } catch (error) {
     next(error);
@@ -83,7 +84,7 @@ export const createContact = async (req, res, next) => {
 
 export const updateContact = async (req, res, next) => {
   try {
-    if (validateID(req.params.id)) {
+    if (validateID(req.params.contactId)) {
       if (
         req.body.name ||
         req.body.email ||
@@ -94,11 +95,11 @@ export const updateContact = async (req, res, next) => {
 
         const contact = await editContact(
           req.user,
-          req.params.id,
+          req.params.contactId,
           req.body.name,
           req.body.email,
           req.body.phone,
-          req.body.favorite
+          req.body.favorite,
         );
 
         if (contact) {
@@ -125,13 +126,12 @@ export const updateContact = async (req, res, next) => {
 
 export async function updateStatusContact(req, res, next) {
   try {
-    if (validateID(req.params.id)) {
+    if (validateID(req.params.contactId)) {
       validate(favoriteContactSchema, req.body);
-
       const contact = await editFavContact(
         req.user,
-        req.params.id,
-        req.body.favorite
+        req.params.contactId,
+        req.body.favorite,
       );
       if (contact) {
         res.status(200).json(contact);
