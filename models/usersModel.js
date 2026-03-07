@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "./sequelize.js";
 
-const emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const emailRegexp = /^[A-Za-z0-9._+%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
 export const User = sequelize.define("user", {
   password: {
